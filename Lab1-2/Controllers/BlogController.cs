@@ -15,22 +15,8 @@ namespace Lab1_2.Controllers
         {
             this.repository = repository;
         }
-
-        [HttpPost]
-        public String Add()
-        {
-            var item = new BlogItem()
-            {
-                Content = "TEST",
-                Title = "TEST"
-            };
-            item.Tags.Add(new Tag { Name = "C#" });
-            item.Tags.Add(new Tag { Name = "ASP.NET" });
-            repository.Save(item);
-            return "New BlogItem Saved";
-        }
-
         static List<BlogItem> items = new List<BlogItem>();
+
         public IActionResult Index()
         {
             return View();
@@ -43,30 +29,66 @@ namespace Lab1_2.Controllers
         public IActionResult BlogList()
         {
 
-            return View(items);
+            return View(repository.FindAll());
         }
         public IActionResult Add(BlogItem item)
         {
             if (ModelState.IsValid)
             {
                 item = repository.Save(item);
-                return View("Confirm", item);
+                return View("ConfirmBlogItem", item);
             }
-
-            return View();
-        }
-
-        
-
-        public class BlogItemController : Controller
-        {
-            private ICRUDBlogItemRepository repository;
-
-            public BlogItemController(ICRUDBlogItemRepository repository)
+            else
             {
-                this.repository = repository;
+                return View("AddForm");
             }
-
+            
         }
+        public IActionResult Edit(int Id)
+        {
+            return View("Edit", repository.FindById(Id));
+        }
+
+        [HttpPost]
+        public IActionResult Edit(BlogItem item)
+        {
+            repository.Update(item);
+            return View("BlogList", repository.FindAll());
+        }
+
+        public IActionResult Delete(BlogItem item)
+        {
+            repository.Delete(item.Id);
+            return View("BlogList", repository.FindAll());
+        }
+
+        public IActionResult Details(BlogItem item)
+        {
+            item = repository.FindById(item.Id);
+            return View(item);
+        }
+        //[HttpPost]
+        //public String AddTest()
+        //{
+        //    var item = new BlogItem()
+        //    {
+        //        Content = "TESTB",
+        //        Title = "TESTB"
+        //    };
+        //    item.Tags.Add(new Tag { Name = "C#" });
+        //    item.Tags.Add(new Tag { Name = "ASP.NET" });
+        //    repository.Save(item);
+        //    return "New BlogItem Saved";
+        //}
+        //public class BlogItemController : Controller
+        //{
+        //    private ICRUDBlogItemRepository repository;
+
+        //    public BlogItemController(ICRUDBlogItemRepository repository)
+        //    {
+        //        this.repository = repository;
+        //    }
+
+        //}
     }
 }

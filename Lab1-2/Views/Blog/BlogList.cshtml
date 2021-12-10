@@ -5,16 +5,53 @@
 @{
 }
 <h1>Lista wpisów</h1>
-
 <table class="table">
-    
+    <thead>
+        <tr>
+            <th>
+                Tytuł
+            </th>
+            <th>
+                Treść
+            </th>
+            <th>
+                Data Utworzenia
+            </th>
+            <th>
+                Akcje
+            </th>
+        </tr>
+    </thead>
+    <tbody>
         @foreach (var item in @Model)
         {
             <tr>
-            <td>@item.Title</td>
-            <td>@item.Content</td>
-            <td>@item.CreationTimestamp</td>
+                <td>
+                    @item.Title
+                </td>
+
+                <td>
+                    @if (item.Content.Length < 50)
+                    {
+                        @item.Content
+                    }
+
+                    else
+                    {
+                        @item.Content.Substring(50);
+                    }
+
+                </td>
+
+                <td>
+                    @item.CreationTimestamp
+                </td>
+                <td>
+                    <a asp-controller="Blog" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edytuj</a>
+                    <a asp-controller="Blog" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Usuń</a>
+                    <a asp-controller="Blog" asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary">Sczegóły</a>
+                </td>
             </tr>
         }
-    
+    </tbody>
 </table>

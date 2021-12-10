@@ -1,20 +1,26 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Lab1_2.Migrations
 {
-    public partial class Tag : Migration
+    public partial class BlogItemTags : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
-                name: "Content",
-                table: "BlogItems",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "",
-                oldClrType: typeof(string),
-                oldType: "nvarchar(max)",
-                oldNullable: true);
+            migrationBuilder.CreateTable(
+                name: "BlogItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreationTimestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlogItems", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Tags",
@@ -47,13 +53,8 @@ namespace Lab1_2.Migrations
             migrationBuilder.DropTable(
                 name: "Tags");
 
-            migrationBuilder.AlterColumn<string>(
-                name: "Content",
-                table: "BlogItems",
-                type: "nvarchar(max)",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(max)");
+            migrationBuilder.DropTable(
+                name: "BlogItems");
         }
     }
 }
