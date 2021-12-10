@@ -9,11 +9,25 @@ namespace Lab1_2.Controllers
 {
     public class BlogController : Controller
     {
-        private ICrudBlogItemRepository repository;
+        private ICRUDBlogItemRepository repository;
 
-        public BlogController(ICrudBlogItemRepository repository)
+        public BlogController(ICRUDBlogItemRepository repository)
         {
             this.repository = repository;
+        }
+
+        [HttpPost]
+        public String Add()
+        {
+            var item = new BlogItem()
+            {
+                Content = "TEST",
+                Title = "TEST"
+            };
+            item.Tags.Add(new Tag { Name = "C#" });
+            item.Tags.Add(new Tag { Name = "ASP.NET" });
+            repository.Save(item);
+            return "New BlogItem Saved";
         }
 
         static List<BlogItem> items = new List<BlogItem>();
@@ -33,8 +47,26 @@ namespace Lab1_2.Controllers
         }
         public IActionResult Add(BlogItem item)
         {
-            items.Add(item);
-            return View("ConfirmBlogItem", item);
+            if (ModelState.IsValid)
+            {
+                item = repository.Save(item);
+                return View("Confirm", item);
+            }
+
+            return View();
+        }
+
+        
+
+        public class BlogItemController : Controller
+        {
+            private ICRUDBlogItemRepository repository;
+
+            public BlogItemController(ICRUDBlogItemRepository repository)
+            {
+                this.repository = repository;
+            }
+
         }
     }
 }

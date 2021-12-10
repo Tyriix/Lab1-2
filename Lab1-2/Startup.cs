@@ -27,7 +27,7 @@ namespace Lab1_2
         {
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration["Data:BlogItems:ConnectionString"]));
-            services.AddTransient<IBlogItemRepository, EFBlogItemRepository>();
+            services.AddTransient<ICRUDBlogItemRepository, EFBlogItemRepository>();
             services.AddControllersWithViews();
         }
 
