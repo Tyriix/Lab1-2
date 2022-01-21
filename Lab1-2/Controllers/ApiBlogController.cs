@@ -7,14 +7,36 @@ using System.Threading.Tasks;
 using Lab1_2.Models;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Filters;
+using static Lab1_2.Models.BasicAuthorizationFilter;
 
 namespace Lab1_2.Controllers
 {
+    [ApiController]
     [Route("api/items")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public class ApiBlogController : ControllerBase
     {
         private ICRUDBlogItemRepository items;
 
+        public class MyExceptionAttribute : ExceptionFilterAttribute
+        {
+            public override void OnException(ExceptionContext context)
+            {
+                if (context.Exception is MyException)
+                {
+                    var body = new Dictionary<string, Object>();
+                    body["error"] = context.Exception.Message;
+                    context.Result = new BadRequestObjectResult(body);
+                }
+            }
+        }
+        public class MyException : Exception
+        {
+            public MyException(string message) : base(message)
+            {
+            }
+        }
         public ApiBlogController(ICRUDBlogItemRepository items)
         {
             this.items = items;
@@ -28,6 +50,8 @@ namespace Lab1_2.Controllers
 
         [HttpGet]
         [Route("{id}")]
+        [MyException]
+        [DisableBasicAuthentication]
         public ActionResult GetOne(int id)
         {
             BlogItem blogItem = items.FindById(id);
@@ -37,7 +61,7 @@ namespace Lab1_2.Controllers
             }
             else
             {
-                return NotFound();
+                throw new MyException("Brak indentyfikatora zasobu");
             }
         }
 
